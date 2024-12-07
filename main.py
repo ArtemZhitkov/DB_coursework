@@ -1,6 +1,6 @@
 from src.search_vacancies import SearchVacancies
 from src.db_worker import DBManager
-from src.utils import create_database, save_data_to_database
+from src.create_database import DBCreate
 
 
 def main():
@@ -9,8 +9,9 @@ def main():
     print("Получаю вакансии с hh.ru...")
     vacancies_data = SearchVacancies().search_query()
     print("Сохраняю результаты в базу данных...")
-    create_database()
-    save_data_to_database(vacancies_data)
+    create_data_base = DBCreate()
+    create_data_base.create_database()
+    create_data_base.save_data_to_database(vacancies_data)
     print("Данные сохранены...")
     data_base = DBManager()
     employees_list = data_base.get_companies_and_vacancies_count()
