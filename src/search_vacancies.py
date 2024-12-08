@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 
 import requests
 
@@ -27,14 +27,41 @@ class SearchVacancies(Api):
             "page": 0,
             "per_page": 100,
         }
-        self.__vacancies: list[Any] = []
+        self.__vacancies: List[Any] = []
 
-    def search_query(self) -> Any:
-        # self.__params["text"] = keyword
-        while self.__params.get("page") != 20:
+    def get_total_pages(self) -> int:
+        """Получает общее количество страниц."""
+        response = self._make_request()
+        return response.json()["pages"]
+
+    def _make_request(self) -> requests.Response:
+        """Создает запрос к API."""
+        try:
             response = requests.get(self.__url, headers=self.__headers, params=self.__params)
-            if response.status_code == 200:
-                vacancies = response.json()["items"]
-                self.__vacancies.extend(vacancies)
-                self.__params["page"] += 1
+            response.raise_for_status()
+            return response
+        except requests.RequestException as e:
+            print(f"Ошибка запроса: {e}")
+            raise
+
+    def search_query(self, max_pages: int = None) -> List[Any]:
+        """Выполняет поисковый запрос и возвращает все вакансии."""
+        total_pages = self.get_total_pages()
+        max_page = min(total_pages, max_pages) if max_pages else total_pages
+
+        while self.__params["page"] < max_page:
+            response = self._make_request()
+            vacancies = response.json()["items"]
+            self.__vacancies.extend(vacancies)
+            self.__params["page"] += 1
+
         return self.__vacancies
+
+    def get_vacancies(self, page: int = 0) -> List[Any]:
+        """Получает вакансии для определенной страницы."""
+        self.__params["page"] = page
+        return self.search_query(page + 1)
+
+    def clear_vacancies(self) -> None:
+        """Очищает список вакансий."""
+        self.__vacancies.clear()

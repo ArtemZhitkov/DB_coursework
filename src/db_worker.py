@@ -66,7 +66,7 @@ class DBManager(DataBase):
                     cur.execute(
                         f"""SELECT employer_name, vacancy_name, salary, vacancy_url FROM vacancies
                             JOIN employees USING(employer_id)
-                            WHERE  vacancy_name LIKE '%{word[1:]}%'"""
+                            WHERE  vacancy_name ILIKE '%{word}%'"""
                     )
                     result.extend(cur.fetchall())
         return result
