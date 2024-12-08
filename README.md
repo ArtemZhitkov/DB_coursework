@@ -24,7 +24,7 @@
 1. Клонируйте репозиторий:
 
    ```bash
-   git clone https://github.com/ваш_пользователь/ваш_репозиторий.git
+   https://github.com/ArtemZhitkov/DB_coursework.git
 2. Перейдите в каталог проекта:
     ```bash
    cd DB_coursework
