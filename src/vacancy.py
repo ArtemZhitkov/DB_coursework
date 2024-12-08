@@ -37,7 +37,10 @@ class Vacancy:
             employer_id = item.get("employer", {}).get("id")
             url = item.get("alternate_url")
             area = item.get("area", {}).get("name", "Регион не указан")
-            salary = item.get("salary", {}).get("from", 0)
+            if item["salary"] is None:
+                salary = 0
+            else:
+                salary = item.get("salary").get("from")
             description = item.get("snippet", {}).get("requirement", "Описание отсутствует")
             vacancies_list.append(cls(name, employer_id, url, area, salary, description))
         return vacancies_list
